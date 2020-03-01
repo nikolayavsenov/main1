@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+{% load app_tags menu_tags %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul>
+    {% if user.is_authenticated %}
+        <li><a href="/accounts/logout/">Выход</a></li>
+    {% else %}
+        <li><a href="/accounts/login/">Вход</a></li>
+    {% endif %}
+</ul>
+{% menu_item menu='Main' %} <!--добавляем меню-->
+<hr>
+ {% category_list %}
+    <hr>
+    <h2>post list below:</h2>
+    <ul>
+
+    <li>{{ post.title }}</li>
+    <li>{{ post.mini_text }}</li>
+    <li>{{ post.published_date }}</li>
+        <li>{{ post.text }}</li>
+        {% if post.image.url is not Null %}
+        <li><img src="{{ post.image.url }}" align="left" width="400" height="300"></li>
+        {% endif %}
+    </ul>
+    <br>
+    <h4>Теги:</h4>{% for tag in post.tags.all %}
+                    {% if tag.published %} <!--проверяем опубликован ли тег-->
+                   <a href="{% url 'tag' tag.slug %}"> {{ tag.name }}</a>
+                    {% endif %}
+                  {% endfor %}
+    <br>
+    <small> Автор: {{ post.author }} , опубликовано: {{ post.published_date }}</small>
+    <small>Всего просмотрено: {{ post.viewed }}</small><br>
+    <!---второй способ подсчёта комментариев-->
+    <!--<small> Всего комментариев: {{ post.get_comments_count }}</small>-->
+    <small> Всего комментариев: {{ post.comment_set.count }}</small>
+
+    <h4>Комментарии:</h4>
+        {% if user.is_authenticated %}
+            <form action="" method="post"> <!--форма отправки коммента-->
+            {% csrf_token %}
+                {{ form.as_p }}
+            <!--<textarea name="text" cols="25" rows="10"></textarea>  'text' - поле из класса-->
+            <!--<input type="hidden" name="post" value="{ post.id }}"> - можно передать в url-->
+            <br>
+            <button type="submit">Отправить</button>
+            </form>
+            {% else %}
+            <br>
+            <small>Authen needed to left a comment!</small>
+        {% endif %}
+    <!-- 2 способ. передача параметра во views через модель comments-->
+    {# {% for comment in somments %} #}
+    {# Пользователь: {{ comment.user }} #}
+    {# {{ comment.text }} <br> #}
+    {# Добавлен: {{ comment.creared_date }}<br><br> #}
+    {# {% endfor %} #}
+    <!---1 способ.обращаемся через модель comment связаный с post и выводим комменты-->
+    {% for comment in post.comment_set.all %}
+        <br>
+        Пользователь: {{ comment.author }}<br>
+        <p>Коммент</p>{{ comment.text }}
+        <p>Добавлен</p> {{ comment.created_date }}
+    {% endfor %}
+
+</body>
+</html>
+</body>
+</html>
