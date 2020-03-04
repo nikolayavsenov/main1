@@ -8,6 +8,9 @@ from django.http.response import *
 from rest_framework.decorators import api_view
 from allauth.account.views import ConfirmEmailView, confirm_email
 from rest_framework.mixins import *
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 #class PostShortList(APIView):
 #    permission_classes = [permissions.AllowAny],
@@ -24,7 +27,8 @@ class PostShortList(generics.ListAPIView):
 
 class CatList(generics.ListAPIView):
     """Список категорий"""
-    permission_classes = [permissions.AllowAny]
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Cat.objects.all()
     serializer_class = CatSerializer
 
@@ -41,6 +45,7 @@ class PostList(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
 
 
 class CommentList(generics.ListAPIView):

@@ -153,6 +153,7 @@ class UpdatePostSerializer(serializers.ModelSerializer):
         )
 
 class TestCreatePostSerializer(serializers.ModelSerializer):
+    published_date=serializers.DateTimeField(default=timezone.now, read_only=True)
     pk = serializers.IntegerField
     pk = id
     category = Cat.objects.name
