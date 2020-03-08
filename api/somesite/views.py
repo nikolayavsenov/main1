@@ -11,6 +11,7 @@ from rest_framework.mixins import *
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 
 #class PostShortList(APIView):
 #    permission_classes = [permissions.AllowAny],
@@ -27,8 +28,9 @@ class PostShortList(generics.ListAPIView):
 
 class CatList(generics.ListAPIView):
     """Список категорий"""
-    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    #authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     queryset = Cat.objects.all()
     serializer_class = CatSerializer
 
@@ -172,6 +174,48 @@ class Testposts(generics.RetrieveUpdateDestroyAPIView):
 
     def post(request, *args, **kwargs):
         return CreateModelMixin.create(request, *args, **kwargs)"""
+
+
+"""class FavoritePost(generics.ListCreateAPIView):
+    permission_classes = [permissions.AllowAny]
+    queryset = FavoritePost.allobjects.all()
+    serializer_class = FavoritePostSerializer
+    lookup_field = 'users_id'
+    def get(self,request, users_id):
+        posts = FavoritePost.allobjects.filter(users_id=users_id)
+        serializer = FavoritePostSerializer(posts, many=True)
+        return Response(serializer.data)"""
+
+
+class FavoritePostById(generics.ListCreateAPIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = FavoritePost.allobjects.all()
+    serializer_class = FavoritePostListSerializer
+    def get(self, request):
+        user=request.user.pk
+        posts = FavoritePost.allobjects.filter(users_id=user)
+        serializer = FavoritePostListSerializer(posts, many=True)
+        return Response(serializer.data)
+    def post(self, request):
+        user = request.user.pk
+        dat=request.data
+        print(dat)
+        posts = FavoritePost.allobjects.filter(users_id=user)
+        serializer = FavoritePostListSerializer(data=request.data)
+        #print(serializer)
+        """При передаче несуществующего id в posts вернётся 201, необходимо реализовать
+        проверку каждого переданного значения. Временно контроль их на фронте"""
+        if serializer.is_valid():
+            serializer.save(users_id=user)
+        return Response(status=201)
+
+
+
+
+
+
+
 
 
 

@@ -3,6 +3,7 @@ from rest_framework import serializers
 from app.models import *
 from django.contrib.auth.models import *
 from rest_framework_recursive.fields import RecursiveField
+from rest_framework.authtoken.models import Token
 
 class TagSerializer(serializers.ModelSerializer):
     """Поля тегов"""
@@ -181,3 +182,27 @@ class TestCreatePostSerializer(serializers.ModelSerializer):
         creation = Post.objects.create(**request)
         return creation
 
+
+"""class FavoritePostSerializer(serializers.ModelSerializer):
+    posts= serializers.IntegerField
+    users_id = serializers.IntegerField(read_only=False)
+    class Meta:
+        model = FavoritePost
+        fields= ('posts', 'users_id')"""
+
+
+
+class UserTokenSerializer(serializers.ModelSerializer):
+    key = models.CharField('Key', max_length=40, primary_key=True)
+    class Meta:
+        model = Token
+        fields = ('key',)
+
+class FavoritePostListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoritePost
+        fields = ('posts', 'users_id',)
+
+    """def create(self, request):
+        creation = FavoritePost.allobjects.create(**request)
+        return creation"""

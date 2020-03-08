@@ -19,6 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+import debug_toolbar
 
 
 urlpatterns = [
@@ -28,6 +29,8 @@ urlpatterns = [
     path('', include("app.urls")),
     path('page/', include("pages.urls")),
     path('api/v1/', include('api.urls')),
+    path('debug/__debug__/', include(debug_toolbar.urls)),
+
     ]
 """выстраиваем корректный путь для папки с медиа"""
 if settings.DEBUG:

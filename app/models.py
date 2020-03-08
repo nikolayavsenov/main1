@@ -11,7 +11,7 @@ from mptt.models import TreeForeignKey
 class Cat(MPTTModel):
     name = models.CharField('Name', max_length=100)
     slug = models.SlugField('url', max_length=100)
-    description = models.TextField("Description to category",max_length=100, default="Some_desc", blank=True)
+    description = models.TextField("Description to category",max_length=1000, default="Some_desc", blank=True)
     parent = TreeForeignKey(
         'self',
         verbose_name='Parent_category',
@@ -39,7 +39,7 @@ class Cat(MPTTModel):
      #   order_insertion_by=('sort',)
 
 class Tag(models.Model):
-    name = models.CharField('Tag', max_length=100)
+    name = models.CharField('Tag', max_length=1000)
     slug = models.SlugField('Tagslug', max_length=100, unique=True)
     published = models.BooleanField("Otobrazhat?", default=True)
     #???wtf???template=models.CharField(max_length=300, default="blog/")
@@ -57,10 +57,10 @@ class Post(models.Model):
         null=True,
         blank=True
     )
-    title=models.CharField(max_length=30)
-    mini_text=models.TextField(max_length=7)
-    text=models.TextField(max_length=1000)
-    subtitle=models.TextField('Short_desc',max_length=50, blank=True, null=True)
+    title=models.CharField(max_length=1000)
+    mini_text=models.TextField(max_length=1000)
+    text=models.TextField(max_length=3000)
+    subtitle=models.TextField('Short_desc',max_length=1000, blank=True, null=True)
     created_date=models.DateTimeField(auto_now=True)
     slug=models.SlugField('url', max_length=15, unique=True)
     image = models.ImageField("Main image", upload_to="post/", null=True, blank=True)
@@ -77,6 +77,13 @@ class Post(models.Model):
         null=True
     )
     tags = models.ManyToManyField(Tag, verbose_name="Teg", blank=True) #привязка многие ко многим
+    favorite = models.ManyToManyField(
+        User,
+        verbose_name="Is favorite by user",
+        blank=True,
+        null=True,
+        related_name="favorite"
+    )
     category= models.ForeignKey(
         Cat, #первичная модель, для привязки один к одному
         verbose_name='Categors',
@@ -107,7 +114,7 @@ class Comment(models.Model):
         verbose_name="Autor",
         on_delete=models.CASCADE
     )
-    text=models.TextField(max_length=50)
+    text=models.TextField(max_length=1000)
     created_date=models.DateTimeField(auto_now_add=True)
     moderation=models.BooleanField(default=True)
     post = models.ForeignKey(
@@ -118,6 +125,23 @@ class Comment(models.Model):
     )
     class Meta:
         verbose_name="Commet"
+
+class FavoritePost(models.Model):
+    allobjects = models.Manager()
+    users = models.ForeignKey(  #модель автора
+        User,
+        verbose_name="fav_by_user",
+        on_delete=models.CASCADE,
+        blank=True
+    )
+    posts = models.ManyToManyField(
+        Post,
+        verbose_name='fav_posts',
+    )
+    class Meta:
+        verbose_name="favorites"
+
+
 
 
 

@@ -22,4 +22,6 @@ urlpatterns = [
     path('testview/?id=<id>', views.PostsView.as_view()),
     path('testpost/<id>', views.Testposts.as_view()),
     path('token-auth/', jwt_views.obtain_auth_token),
+    #path('favorite/', views.FavoritePost.as_view()),
+    path('favorite/', views.FavoritePostById.as_view()),
 ]
