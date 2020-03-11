@@ -198,17 +198,21 @@ class FavoritePostById(generics.ListCreateAPIView):
         serializer = FavoritePostListSerializer(posts, many=True)
         return Response(serializer.data)
     def post(self, request):
+        serializer_class = FavoritePostAddSerializer
         user = request.user.pk
         dat=request.data
         print(dat)
         posts = FavoritePost.allobjects.filter(users_id=user)
-        serializer = FavoritePostListSerializer(data=request.data)
+        serializer = FavoritePostAddSerializer(data=request.data)
         #print(serializer)
         """При передаче несуществующего id в posts вернётся 201, необходимо реализовать
         проверку каждого переданного значения. Временно контроль их на фронте"""
         if serializer.is_valid():
             serializer.save(users_id=user)
         return Response(status=201)
+
+    #def delete(self, request):
+
 
 
 

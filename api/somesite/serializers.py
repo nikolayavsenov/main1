@@ -198,10 +198,26 @@ class UserTokenSerializer(serializers.ModelSerializer):
         model = Token
         fields = ('key',)
 
+
+class FavoritePostSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField
+    pk = id
+    class Meta:
+        model = Post
+        fields = ('id', 'title', 'text', 'published_date', 'category')
+
+
 class FavoritePostListSerializer(serializers.ModelSerializer):
+    posts = FavoritePostSerializer(many=True)
     class Meta:
         model = FavoritePost
-        fields = ('posts', 'users_id',)
+        fields = ('posts',)
+
+class FavoritePostAddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoritePost
+        fields = ('posts',)
+
 
     """def create(self, request):
         creation = FavoritePost.allobjects.create(**request)
